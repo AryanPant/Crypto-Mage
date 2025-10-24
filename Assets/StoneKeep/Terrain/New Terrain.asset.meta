@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7919fe606000b90498c9456cf122cd50
+timeCreated: 1455696595
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Terrain/New Terrain.asset
+  uploadId: 679364

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 71129e0d69976c34e9cc170d4ff97466
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302142
+  packageName: VFX Graph - Kikoken
+  packageVersion: 1.1
+  assetPath: Assets/TwoUncleVFX/Settings/TwoUncleVFX_URP-Balanced.asset
+  uploadId: 760011

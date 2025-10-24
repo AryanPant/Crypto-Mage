@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c1f4a22861ed0e046a52c8a9858fbc3b
+timeCreated: 1455753086
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Gravel_base_c.prefab
+  uploadId: 679364

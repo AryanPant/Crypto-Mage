@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b1336b3247a1df647b4b289180b97bd6
+timeCreated: 1455592052
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Floor_stairs_c.prefab
+  uploadId: 679364

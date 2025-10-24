@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f6f4de8fd4cfbb14e941a314cb912831
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Scripts/DoorOpen.cs
+  uploadId: 679364

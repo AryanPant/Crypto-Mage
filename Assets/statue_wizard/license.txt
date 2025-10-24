@@ -1,0 +1,11 @@
+Model Information:
+* title:	Statue marbre_Mage
+* source:	https://sketchfab.com/3d-models/statue-marbre-mage-0cf6be4c46854bdd93b90842dd144339
+* author:	lantra (https://sketchfab.com/lantra)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Statue marbre_Mage" (https://sketchfab.com/3d-models/statue-marbre-mage-0cf6be4c46854bdd93b90842dd144339) by lantra (https://sketchfab.com/lantra) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

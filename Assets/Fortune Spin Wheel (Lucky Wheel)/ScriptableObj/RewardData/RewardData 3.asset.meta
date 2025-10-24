@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f11969faa4681ff41aa8e04100f7b3f4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288308
+  packageName: Fortune Spin Wheel (Lucky Wheel)
+  packageVersion: 1.0
+  assetPath: Assets/Fortune Spin Wheel (Lucky Wheel)/ScriptableObj/RewardData/RewardData
+    3.asset
+  uploadId: 673252

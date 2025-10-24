@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 84f1c2dec1d7fe24dab82968d3a1dacb
+timeCreated: 1455754441
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Rubble.prefab
+  uploadId: 679364

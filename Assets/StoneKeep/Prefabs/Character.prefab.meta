@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b71b1d6f203521a48b471bf9fc116208
+timeCreated: 1455356025
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Character.prefab
+  uploadId: 679364

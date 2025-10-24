@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6aad28f97b936254b921184b03be35ac
+timeCreated: 1456128816
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Structures/Tower_d.prefab
+  uploadId: 679364

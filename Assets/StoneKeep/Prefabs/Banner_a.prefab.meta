@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: de736aa6a228a174d99b2b99ed036fe2
+timeCreated: 1456008000
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Banner_a.prefab
+  uploadId: 679364

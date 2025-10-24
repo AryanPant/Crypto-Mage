@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 71faa19656d9bdd43bff9f924d3ceffb
+timeCreated: 1455575501
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Floor_a.prefab
+  uploadId: 679364

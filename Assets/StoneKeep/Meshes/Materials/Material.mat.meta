@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 837ee4ab744f82044900713a97323a68
+timeCreated: 1455350209
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Meshes/Materials/Material.mat
+  uploadId: 679364

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 591db76eb01361c498061a9cb852f085
+timeCreated: 1456129223
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Wood_spikes.prefab
+  uploadId: 679364

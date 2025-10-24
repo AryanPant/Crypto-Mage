@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4793f4dec1263ab41a62cc0f38afd8ce
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288308
+  packageName: Fortune Spin Wheel (Lucky Wheel)
+  packageVersion: 1.0
+  assetPath: Assets/Fortune Spin Wheel (Lucky Wheel)/Scripts/FortuneSpinWheel.cs
+  uploadId: 673252

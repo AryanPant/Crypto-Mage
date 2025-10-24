@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 93dae88d4ef9c8b4b9c32b8617976268
+timeCreated: 1455922109
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Meshes/Materials/Wood_diffuse.mat
+  uploadId: 679364

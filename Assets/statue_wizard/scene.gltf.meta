@@ -1,0 +1,139 @@
+fileFormatVersion: 2
+guid: d5b11b479c5c9e1478683903cec8efbc
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 715df9372183c47e389bb6e19fbc3b52, type: 3}
+  editorImportSettings:
+    generateSecondaryUVSet: 0
+  importSettings:
+    nodeNameMethod: 1
+    animationMethod: 2
+    generateMipMaps: 1
+    texturesReadable: 0
+    defaultMinFilterMode: 9729
+    defaultMagFilterMode: 9729
+    anisotropicFilterLevel: 1
+  instantiationSettings:
+    mask: -1
+    layer: 0
+    skinUpdateWhenOffscreen: 1
+    lightIntensityFactor: 1
+    sceneObjectCreation: 2
+  assetDependencies:
+  - type: 0
+    originalUri: Assets\statue_wizard\scene.bin
+    assetPath: Assets\statue_wizard\scene.bin
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material0_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material0_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material0_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material0_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material0_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material0_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material01_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material01_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material01_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material01_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material01_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material01_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material02_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material02_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material02_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material02_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material02_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material02_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material03_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material03_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material03_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material03_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material03_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material03_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material04_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material04_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material04_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material04_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material04_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material04_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material05_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material05_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material05_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material05_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material05_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material05_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material06_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material06_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material06_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material06_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material06_normal.png
+    assetPath: Assets\statue_wizard\textures\material06_normal.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material07_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material07_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material07_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material07_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material07_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material07_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material08_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material08_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material08_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material08_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material08_normal.png
+    assetPath: Assets\statue_wizard\textures\material08_normal.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material09_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material09_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material09_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material09_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material09_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material09_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material010_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material010_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material010_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material010_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material010_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material010_normal.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material011_baseColor.jpeg
+    assetPath: Assets\statue_wizard\textures\material011_baseColor.jpeg
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material011_metallicRoughness.png
+    assetPath: Assets\statue_wizard\textures\material011_metallicRoughness.png
+  - type: 1
+    originalUri: Assets\statue_wizard\textures\material011_normal.jpeg
+    assetPath: Assets\statue_wizard\textures\material011_normal.jpeg
+  reportItems: []

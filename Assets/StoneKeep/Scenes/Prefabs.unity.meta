@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 94b7329978d03924cbf0cf2af7712db5
+timeCreated: 1456135345
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Scenes/Prefabs.unity
+  uploadId: 679364

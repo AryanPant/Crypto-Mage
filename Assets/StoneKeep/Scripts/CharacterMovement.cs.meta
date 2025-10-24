@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5f20c42a05149e34da76ec679f9c91bb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Scripts/CharacterMovement.cs
+  uploadId: 679364

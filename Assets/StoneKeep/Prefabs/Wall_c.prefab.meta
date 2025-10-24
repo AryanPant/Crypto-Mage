@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0979b1940f90ad84990fc317c3e64e57
+timeCreated: 1456096185
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Wall_c.prefab
+  uploadId: 679364

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5f07d2720304e134ba478f884cb925cf
+timeCreated: 1455326540
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Scenes/Preview.unity
+  uploadId: 679364

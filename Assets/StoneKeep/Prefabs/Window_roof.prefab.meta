@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c2c6b5ed11aed63429e0c0a111c9f738
+timeCreated: 1456127827
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Window_roof.prefab
+  uploadId: 679364

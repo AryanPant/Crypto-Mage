@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a18083f8f3ba2ae44a8a075335bdb362
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Scripts/PlayerInteraction.cs
+  uploadId: 679364

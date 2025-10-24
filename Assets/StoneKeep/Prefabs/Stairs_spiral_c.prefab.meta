@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 660d203295f34a34c8b7072765fddfe7
+timeCreated: 1455688387
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Prefabs/Stairs_spiral_c.prefab
+  uploadId: 679364

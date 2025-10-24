@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/Scenes/SampleScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/WalletConnectScene.unity
+    guid: 5867b5611fa1cc145bf2d2a408cf4671
+  - enabled: 1
+    path: Assets/Scenes/StartScene.unity
+    guid: 3adee0381f02b2b4cb83328e8b722833
+  - enabled: 1
+    path: Assets/Scenes/Multiplayer.unity
+    guid: a020f468eaf54344fb165cf6834e2d6f
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
+    guid: 8bdb63ab9b306d0f08f70f08bd3a67ce
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 424c0ee1539d68028855ec11ac5d0e43
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_UseUCBPForAssetBundles: 0

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 85032979709e6554e8d0cf8c030d676c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8574412962073106934
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56596
+  packageName: Medieval Stone Keep
+  packageVersion: 1.0
+  assetPath: Assets/StoneKeep/Terrain/_TerrainAutoUpgrade/layer_Grey12a734f1a24d4f9e.terrainlayer
+  uploadId: 679364
