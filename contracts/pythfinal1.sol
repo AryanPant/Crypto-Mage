@@ -21,7 +21,6 @@ contract WizardLobbySepolia is ReentrancyGuard {
     uint256 public constant GAME_DURATION_SECONDS = 600; // Duration of the game in seconds (10 minutes)
 
     /// Require USD value = 1 USD exactly (corrected for proper Pyth format)
-    // @dev-info : comment says 8 decimal
     uint256 public constant MINIMUM_USD_VALUE = 1 * 10 ** 18; // $1 in 8 decimals (Pyth format)
 
     /// Pyth price feed ID for ETH/USD
@@ -382,3 +381,4 @@ contract WizardLobbySepolia is ReentrancyGuard {
         areRewardsDistributed = false;
     }
 }
+
