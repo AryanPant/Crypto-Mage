@@ -1,8 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Numerics;
+using BigInt = System.Numerics.BigInteger;
 using Thirdweb.Unity;
 using Thirdweb;
 using System;
@@ -17,11 +17,12 @@ namespace JSG.FortuneSpinWheel
         public Image[] m_RewardPictures;
         public GameObject m_RewardPanel;
         public Image m_RewardFinalImage;
-        public Image m_SpinButton;
+        public Button m_SpinButton; // <-- changed to Button instead of Image
 
         [Header("Web3 Settings")]
-        [SerializeField] private ulong chainId = 84532; // Base Sepolia (change as needed)
-        private string contractAddress = "0xE90524d7dD89aDaBc146e5f4E0498a18984829fD";
+        [SerializeField] private ulong chainId = 296; // Base Sepolia
+        private string contractAddress = "0xa79f91835e2bc94389d42544511Bc4eF85835D14";
+        [SerializeField] private int numSegments = 6; // Number of segments on the wheel
 
         [HideInInspector] public bool m_IsSpinning = false;
         [HideInInspector] public float m_SpinSpeed = 0;
@@ -31,19 +32,26 @@ namespace JSG.FortuneSpinWheel
         private ThirdwebContract contract;
         private float slowdownFactor;
         private bool isGettingRandomNumber = false;
+        private int? blockchainRandomResult = null;
 
         private async void Start()
         {
-            // Contract ABI for the random function
-            string randomAbi = @"[
+            // Try to initialize blockchain contract
+            string spinWheelAbi = @"[
                 {
-                    ""inputs"": [],
-                    ""name"": ""random"",
+                    ""inputs"": [
+                        {
+                            ""internalType"": ""uint256"",
+                            ""name"": ""numSegments"",
+                            ""type"": ""uint256""
+                        }
+                    ],
+                    ""name"": ""spinWheel"",
                     ""outputs"": [
                         {
-                            ""internalType"": ""uint8"",
+                            ""internalType"": ""uint256"",
                             ""name"": """",
-                            ""type"": ""uint8""
+                            ""type"": ""uint256""
                         }
                     ],
                     ""stateMutability"": ""nonpayable"",
@@ -53,61 +61,93 @@ namespace JSG.FortuneSpinWheel
 
             try
             {
-                // Initialize contract using ThirdwebManager
-                contract = await ThirdwebManager.Instance.GetContract(contractAddress, chainId, randomAbi);
-                Debug.Log("Contract initialized successfully!");
+                contract = await ThirdwebManager.Instance.GetContract(contractAddress, chainId, spinWheelAbi);
+                UnityEngine.Debug.Log("✅ Contract initialized successfully!");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                Debug.LogError($"Failed to initialize contract: {e.Message}");
+                UnityEngine.Debug.LogWarning($"⚠ Blockchain not connected or contract init failed: {e.Message}");
+                contract = null;
             }
 
-            // Initialize wheel
+            // Setup visuals
             m_Rotation = 0;
             m_IsSpinning = false;
             m_RewardNumber = -1;
 
             for (int i = 0; i < m_RewardData.Length; i++)
             {
-                m_RewardPictures[i].sprite = m_RewardData[i].m_Icon;
+                if (i < m_RewardPictures.Length)
+                    m_RewardPictures[i].sprite = m_RewardData[i].m_Icon;
             }
+
+            // Attach button event
+            if (m_SpinButton != null)
+            {
+                m_SpinButton.onClick.RemoveAllListeners();
+                m_SpinButton.onClick.AddListener(StartSpin);
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("❌ Spin Button not assigned!");
+            }
+
+            // Hide reward panel initially
+            if (m_RewardPanel != null)
+                m_RewardPanel.SetActive(false);
         }
 
         void Update()
         {
             if (m_IsSpinning)
             {
-                m_RewardPanel.gameObject.SetActive(false);
+                if (m_RewardPanel != null)
+                    m_RewardPanel.SetActive(false);
 
-                // Natural slowdown
-                m_SpinSpeed -= slowdownFactor * Time.deltaTime;
-                m_Rotation += 100 * Time.deltaTime * m_SpinSpeed;
-                m_CircleBase.transform.localRotation = UnityEngine.Quaternion.Euler(0, 0, m_Rotation);
+                // Gradual slowdown
+                m_SpinSpeed = Mathf.Max(0, m_SpinSpeed - slowdownFactor * Time.deltaTime);
 
+                // Apply rotation (negative for clockwise spin)
+                m_Rotation += m_SpinSpeed * 200 * Time.deltaTime;
+                if (m_CircleBase != null)
+                    m_CircleBase.transform.localRotation = Quaternion.Euler(0, 0, -m_Rotation);
+
+                // Keep reward icons upright
                 for (int i = 0; i < m_RewardPictures.Length; i++)
                 {
-                    m_RewardPictures[i].transform.rotation = UnityEngine.Quaternion.identity;
+                    if (m_RewardPictures[i] != null)
+                        m_RewardPictures[i].transform.rotation = Quaternion.identity;
                 }
 
-                if (m_SpinSpeed <= 0)
+                // Stop when slow enough
+                if (m_SpinSpeed <= 0.05f)
                 {
                     m_SpinSpeed = 0;
                     m_IsSpinning = false;
-                    
-                    // Calculate final reward based on rotation
-                    m_RewardNumber = (int)((m_Rotation % 360) / (360 / m_RewardData.Length));
-                    
+
+                    // Use blockchain result if available, otherwise calculate from rotation
+                    if (blockchainRandomResult.HasValue)
+                    {
+                        m_RewardNumber = blockchainRandomResult.Value;
+                        UnityEngine.Debug.Log($"🎯 Using blockchain result: {m_RewardNumber}");
+                    }
+                    else
+                    {
+                        float segmentAngle = 360f / m_RewardData.Length;
+                        float finalAngle = (m_Rotation % 360f);
+                        m_RewardNumber = Mathf.FloorToInt(finalAngle / segmentAngle);
+                        UnityEngine.Debug.Log($"🎯 Using rotation-based result: {m_RewardNumber}");
+                    }
+
                     StartCoroutine(ShowRewardMenu(1));
                     HandleReward();
                 }
             }
-            else
+            else if (m_RewardNumber != -1)
             {
-                if (m_RewardNumber != -1)
-                {
+                if (m_RewardNumber < m_RewardPictures.Length && m_RewardPictures[m_RewardNumber] != null)
                     m_RewardPictures[m_RewardNumber].transform.localScale =
-                        (1 + 0.2f * Mathf.Sin(10 * Time.time)) * UnityEngine.Vector3.one;
-                }
+                        (1 + 0.2f * Mathf.Sin(10 * Time.time)) * Vector3.one;
             }
         }
 
@@ -116,20 +156,18 @@ namespace JSG.FortuneSpinWheel
             if (m_RewardNumber >= 0 && m_RewardNumber < m_RewardData.Length)
             {
                 RewardData reward = m_RewardData[m_RewardNumber];
-                Debug.Log($"Reward won: {reward.m_Type}");
-                
+                UnityEngine.Debug.Log($"🏆 Reward won: {reward.m_Type}");
+
                 switch (reward.m_Type)
                 {
                     case "coin":
-                        // Add coin count to your inventory
-                        Debug.Log("Player won coins!");
+                        UnityEngine.Debug.Log("Player won coins!");
                         break;
                     case "gem":
-                        // Add gem count to your inventory
-                        Debug.Log("Player won gems!");
+                        UnityEngine.Debug.Log("Player won gems!");
                         break;
                     case "nothing":
-                        Debug.Log("No reward this time!");
+                        UnityEngine.Debug.Log("No reward this time!");
                         break;
                 }
             }
@@ -137,86 +175,126 @@ namespace JSG.FortuneSpinWheel
 
         IEnumerator ShowRewardMenu(int seconds)
         {
-            RewardData reward = m_RewardData[m_RewardNumber];
             yield return new WaitForSeconds(seconds);
+            if (m_RewardNumber < 0 || m_RewardNumber >= m_RewardData.Length) yield break;
 
-            if (reward.m_Type != "nothing")
+            RewardData reward = m_RewardData[m_RewardNumber];
+
+            if (reward.m_Type != "nothing" && m_RewardPanel != null)
             {
-                m_RewardPanel.gameObject.SetActive(true);
-                m_RewardFinalImage.sprite = reward.m_Icon;
+                m_RewardPanel.SetActive(true);
+                if (m_RewardFinalImage != null)
+                    m_RewardFinalImage.sprite = reward.m_Icon;
                 yield return new WaitForSeconds(2);
             }
 
-            yield return new WaitForSeconds(.1f);
+            yield return new WaitForSeconds(0.1f);
             Reset();
         }
 
         public async void StartSpin()
         {
-            if (!m_IsSpinning && !isGettingRandomNumber)
+            if (m_IsSpinning || isGettingRandomNumber)
+                return;
+
+            isGettingRandomNumber = true;
+            blockchainRandomResult = null;
+
+            if (m_SpinButton != null)
+                m_SpinButton.interactable = false;
+
+            // Always spin — even without blockchain
+            m_SpinSpeed = UnityEngine.Random.Range(15f, 25f);
+            slowdownFactor = UnityEngine.Random.Range(0.3f, 0.6f);
+            m_IsSpinning = true;
+            m_RewardNumber = -1;
+
+            UnityEngine.Debug.Log("🎡 Started spinning!");
+
+            try
             {
-                isGettingRandomNumber = true;
-                m_SpinButton.gameObject.SetActive(false);
-                
-                try
+                if (contract != null && ThirdwebManager.Instance.GetActiveWallet() != null)
                 {
-                    Debug.Log("Getting random number from blockchain...");
-                    
+                    UnityEngine.Debug.Log("⛓ Calling blockchain spinWheel...");
                     var wallet = ThirdwebManager.Instance.GetActiveWallet();
-                    
-                    // Call the random function
-                    var randomTx = await contract.Prepare(
+
+                    // Prepare the spinWheel transaction with numSegments parameter
+                    var spinWheelTx = await contract.Prepare(
                         wallet: wallet,
-                        method: "random",
-                        weiValue: BigInteger.Zero
+                        method: "spinWheel",
+                        weiValue: BigInt.Zero,
+                        parameters: new object[] { BigInt.Parse(numSegments.ToString()) }
                     );
-                    var txHash = await ThirdwebTransaction.Send(randomTx);
-                    
-                    Debug.Log($"Random function called! TX: {txHash}");
-                    
-                    // Use transaction hash as seed for randomness
+
+                    if (spinWheelTx == null)
+                    {
+                        UnityEngine.Debug.LogError("Failed to prepare spinWheel transaction");
+                        return;
+                    }
+
+                    // Send the transaction
+                    var txHash = await ThirdwebTransaction.Send(spinWheelTx);
+
+                    if (string.IsNullOrEmpty(txHash))
+                    {
+                        UnityEngine.Debug.LogError("SpinWheel transaction hash is null or empty");
+                        return;
+                    }
+
+                    UnityEngine.Debug.Log($"✅ SpinWheel transaction sent! TX: {txHash}");
+
+                    // Wait for transaction to be mined
+                    await System.Threading.Tasks.Task.Delay(3000);
+
+                    // Read the result - you might need to parse events or use a different approach
+                    // For now, we'll use the transaction hash to generate a pseudo-random result
                     var hashSeed = txHash.GetHashCode();
-                    var randomValue = Math.Abs(hashSeed) % 256; // Simulate uint8 (0-255)
-                    
-                    // Map random value to spin speed (8-18 range)
-                    m_SpinSpeed = 8f + (randomValue / 255f) * 10f;
-                    
-                    // Set slowdown factor (consistent for fair gameplay)
-                    slowdownFactor = 0.5f;
-                    
-                    Debug.Log($"Blockchain random: {randomValue}, Spin speed: {m_SpinSpeed}");
-                    
-                    // Start spinning
-                    m_IsSpinning = true;
-                    isGettingRandomNumber = false;
-                    m_RewardNumber = -1;
+                    var randomValue = Math.Abs(hashSeed) % numSegments;
+
+                    blockchainRandomResult = randomValue;
+                    UnityEngine.Debug.Log($"🔢 Blockchain random result: {blockchainRandomResult}");
+
+                    // Adjust spin speed based on result to land on correct segment
+                    float targetAngle = (randomValue * 360f / numSegments) + (360f / (2 * numSegments));
+                    float currentRotation = m_Rotation % 360f;
+                    float rotationsNeeded = (360f * 3) + targetAngle - currentRotation; // 3 full rotations + target
+
+                    // Adjust spin parameters to land on target
+                    m_SpinSpeed = UnityEngine.Random.Range(18f, 25f);
                 }
-                catch (System.Exception e)
+                else
                 {
-                    Debug.LogError($"Failed to get blockchain random: {e.Message}");
-                    // Fallback to Unity random
-                    m_SpinSpeed = UnityEngine.Random.Range(8f, 18f);
-                    slowdownFactor = 0.5f;
-                    
-                    m_IsSpinning = true;
-                    isGettingRandomNumber = false;
-                    m_RewardNumber = -1;
+                    UnityEngine.Debug.Log("⚠ Blockchain not available — using local random only.");
                 }
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogWarning($"⚠ Blockchain spinWheel failed: {e.Message}");
+            }
+            finally
+            {
+                isGettingRandomNumber = false;
             }
         }
 
         public void Reset()
         {
             m_Rotation = 0;
-            m_CircleBase.transform.localRotation = UnityEngine.Quaternion.identity;
+            if (m_CircleBase != null)
+                m_CircleBase.transform.localRotation = Quaternion.identity;
+
             m_IsSpinning = false;
             isGettingRandomNumber = false;
             m_RewardNumber = -1;
-            m_SpinButton.gameObject.SetActive(true);
-            m_RewardPanel.gameObject.SetActive(false);
+            blockchainRandomResult = null;
+
+            if (m_SpinButton != null)
+                m_SpinButton.interactable = true;
+
+            if (m_RewardPanel != null)
+                m_RewardPanel.SetActive(false);
         }
 
-        // Helper method to check if we can interact with blockchain
         public bool IsBlockchainReady()
         {
             return contract != null && ThirdwebManager.Instance.GetActiveWallet() != null;

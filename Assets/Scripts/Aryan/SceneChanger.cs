@@ -18,4 +18,9 @@ public class SceneChanger : NetworkBehaviour
             Debug.LogWarning("Only the server/host can change scenes!");
         }
     }
+
+    public void BackButton()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 }

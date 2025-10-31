@@ -1723,7 +1723,6 @@ GameObject:
   - component: {fileID: 7887851006566973932}
   - component: {fileID: 864021078703194747}
   - component: {fileID: 5454063243600075982}
-  - component: {fileID: 2769570821786387117}
   - component: {fileID: 558532363245826645}
   - component: {fileID: 622742752815008027}
   - component: {fileID: 4405086983152974188}
@@ -1731,7 +1730,8 @@ GameObject:
   - component: {fileID: 4906236809329439522}
   - component: {fileID: -5780564092170211141}
   - component: {fileID: -6148721082837809644}
-  - component: {fileID: 7167574859911496479}
+  - component: {fileID: 1105232048382399869}
+  - component: {fileID: 3059159899564754572}
   m_Layer: 8
   m_Name: PlayerNetworked 1
   m_TagString: Player
@@ -2034,26 +2034,6 @@ MonoBehaviour:
   thirdPersonController: {fileID: 4248483529258546775}
   attackLayerIndex: 1
   layerBlendSpeed: 5
---- !u!114 &2769570821786387117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4994545768832965906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0716cc170cd6eb7419c36acb9c59a6f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  playerInput: {fileID: 7887851006566973932}
-  thirdPersonController: {fileID: 4248483529258546775}
-  starterAssetsInputs: {fileID: 1826210357660854443}
-  cameraHolder: {fileID: 4774631067049566081}
-  playerCamera: {fileID: 6886721863610899666}
-  cinemachineBrain: {fileID: 4745754853816289148}
-  audioListener: {fileID: 6197421453436540897}
 --- !u!114 &558532363245826645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2176,7 +2156,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: 80844c100d6d4b14fa124b40d06247d7, type: 2}
-  m_audioClip: {fileID: 8300000, guid: af66162561d2eed40ad49268cab318bb, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: af66162561d2eed40ad49268cab318bb, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -2263,7 +2243,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7167574859911496479
+--- !u!114 &1105232048382399869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2272,7 +2252,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4994545768832965906}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: da52bf8bbc1de48cfb221a6ff30f7972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -2309,6 +2289,26 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &3059159899564754572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4994545768832965906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0716cc170cd6eb7419c36acb9c59a6f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerInput: {fileID: 7887851006566973932}
+  thirdPersonController: {fileID: 4248483529258546775}
+  starterAssetsInputs: {fileID: 1826210357660854443}
+  cameraHolder: {fileID: 4774631067049566081}
+  playerCamera: {fileID: 6886721863610899666}
+  cinemachineBrain: {fileID: 4745754853816289148}
+  audioListener: {fileID: 6197421453436540897}
 --- !u!1 &5205947070392258772
 GameObject:
   m_ObjectHideFlags: 0

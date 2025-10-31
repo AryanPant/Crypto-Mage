@@ -322,7 +322,7 @@ public class NFTShopManager : MonoBehaviour
             var coins = await contract.Read<BigInteger>("getCoins", userAddress);
             
             if (userCoinsText != null)
-                userCoinsText.text = $"Coins: {coins}";
+                userCoinsText.text = $"{coins}";
         }
         catch (Exception e)
         {

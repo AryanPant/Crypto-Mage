@@ -15,4 +15,4 @@ MonoBehaviour:
   m_Title: coin
   m_Type: coin
   m_Count: 30
-  m_Icon: {fileID: 21300000, guid: 9ecb68ece62b7804b8a45b91aab9189f, type: 3}
+  m_Icon: {fileID: 21300000, guid: dc911c962a10f454997d5332230b5b53, type: 3}

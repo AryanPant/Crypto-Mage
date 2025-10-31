@@ -10,15 +10,16 @@ using System;
 using System.Linq;
 using Unity.Netcode;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class SimpleLobbyManager : MonoBehaviour
 {
     bool staked = false;
     public int click = 0;
-    private string lobbyAddress = "0xf9caD84FC8d2FC68996Baf3fA550f823B0aBeF3D";
-    private string chestAddress = "0xb79d56D7C5707588737C3efb718b7406232bd3FF";
+    private string lobbyAddress = "0x91ADeF47103B72f9C771f14eDf5f4BDB88da0b2d";
+    private string chestAddress = "0x61146B3Dd96e03B8fF0F7fcd2A53701d362C9Bd6";
 
-    [SerializeField] private ulong chainId = 84532; // Base Sepolia
+    private ulong chainId = 296; // Base Sepolia
     [SerializeField] private GameObject waiting; // Base Sepolia
     //[SerializeField] private GameObject hostwaiting; // Base Sepolia
     [SerializeField] private GameObject buttonStaked; // Base Sepolia
@@ -32,9 +33,9 @@ public class SimpleLobbyManager : MonoBehaviour
     [Header("UI")]
     //[SerializeField] private Button joinLobbyButton;
     //[SerializeField] private Button Setusername;
-    //[SerializeField] private Button RequestChestOpeningbuttton;
-    //[SerializeField] private Button ActivateFallbackbutton;
-    //[SerializeField] private TMP_Text statusText;
+    //[SerializeField] private Button OpenChestButton;
+    [SerializeField] private TMP_Text statusText;
+    [SerializeField] private TMP_Text coinwon;
     //[SerializeField] private TMP_Text stakeAmountText;
 
     private ThirdwebContract contractlobby;
@@ -54,7 +55,7 @@ public class SimpleLobbyManager : MonoBehaviour
 
         if (!isInitialized)
         {
-            Debug.LogError("Failed to initialize ThirdwebManager within the timeout period.");
+            UnityEngine.Debug.LogError("Failed to initialize ThirdwebManager within the timeout period.");
             yield break;
         }
 
@@ -70,17 +71,17 @@ public class SimpleLobbyManager : MonoBehaviour
         {
             if (ThirdwebManager.Instance != null)
             {
-                Debug.Log("ThirdwebManager.Instance found!");
+                UnityEngine.Debug.Log("ThirdwebManager.Instance found!");
                 isInitialized = true;
                 yield break;
             }
 
-            Debug.Log($"Waiting for ThirdwebManager... ({elapsedTime:F1}s/{maxWaitTime}s)");
+            UnityEngine.Debug.Log($"Waiting for ThirdwebManager... ({elapsedTime:F1}s/{maxWaitTime}s)");
             yield return new WaitForSeconds(checkInterval);
             elapsedTime += checkInterval;
         }
 
-        Debug.LogError($"ThirdwebManager.Instance is still null after {maxWaitTime} seconds!");
+        UnityEngine.Debug.LogError($"ThirdwebManager.Instance is still null after {maxWaitTime} seconds!");
         isInitialized = false;
     }
 
@@ -91,7 +92,7 @@ public class SimpleLobbyManager : MonoBehaviour
 
         if (task.IsFaulted)
         {
-            Debug.LogError($"Contract initialization failed: {task.Exception}");
+            UnityEngine.Debug.LogError($"Contract initialization failed: {task.Exception}");
         }
     }
 
@@ -111,46 +112,63 @@ public class SimpleLobbyManager : MonoBehaviour
                 ""outputs"": [],
                 ""stateMutability"": ""nonpayable"",
                 ""type"": ""function""
+            },
+            {
+                ""inputs"": [],
+                ""name"": ""startGame"",
+                ""outputs"": [],
+                ""stateMutability"": ""nonpayable"",
+                ""type"": ""function""
             }
         ]";
 
         string ChestAbi = @"[
-    {
-        ""inputs"": [{ ""internalType"": ""uint64"", ""name"": ""sequenceNumber"", ""type"": ""uint64""}],
-        ""name"": ""activateFallback"",
-        ""outputs"": [],
-        ""stateMutability"": ""nonpayable"",
-        ""type"": ""function""
-    },
-    {
-        ""inputs"": [],
-        ""name"": ""requestChestOpening"",
-        ""outputs"": [{ ""internalType"": ""uint64"", ""name"": ""sequenceNumber"", ""type"": ""uint64""}],
-        ""stateMutability"": ""payable"",
-        ""type"": ""function""
-    },
-    {
-        ""inputs"": [{ ""internalType"": ""address"", ""name"": ""user"", ""type"": ""address""}],
-        ""name"": ""getUserChestRequests"",
-        ""outputs"": [
-            { ""internalType"": ""uint64[]"", ""name"": ""sequenceNumbers"", ""type"": ""uint64[]""},
-            { ""internalType"": ""bool[]"", ""name"": ""fulfilled"", ""type"": ""bool[]""},
-            { ""internalType"": ""uint256[]"", ""name"": ""coinsWon"", ""type"": ""uint256[]""},
-            { ""internalType"": ""uint256[]"", ""name"": ""timestamps"", ""type"": ""uint256[]""},
-            { ""internalType"": ""string[]"", ""name"": ""status"", ""type"": ""string[]""},
-            { ""internalType"": ""string[]"", ""name"": ""randomnessSource"", ""type"": ""string[]""}
-        ],
-        ""stateMutability"": ""view"",
-        ""type"": ""function""
-    },
-    {
-        ""inputs"": [{ ""internalType"": ""uint64"", ""name"": ""sequenceNumber"", ""type"": ""uint64""}],
-        ""name"": ""canActivateFallback"",
-        ""outputs"": [{ ""internalType"": ""bool"", ""name"": """", ""type"": ""bool""}],
-        ""stateMutability"": ""view"",
-        ""type"": ""function""
-    }
-]";
+            {
+                ""inputs"": [],
+                ""name"": ""openChest"",
+                ""outputs"": [
+                    {
+                        ""internalType"": ""uint256"",
+                        ""name"": ""coinsWon"",
+                        ""type"": ""uint256""
+                    }
+                ],
+                ""stateMutability"": ""nonpayable"",
+                ""type"": ""function""
+            },
+            {
+                ""inputs"": [
+                    {
+                        ""internalType"": ""address"",
+                        ""name"": ""user"",
+                        ""type"": ""address""
+                    }
+                ],
+                ""name"": ""getCoins"",
+                ""outputs"": [
+                    {
+                        ""internalType"": ""uint256"",
+                        ""name"": """",
+                        ""type"": ""uint256""
+                    }
+                ],
+                ""stateMutability"": ""view"",
+                ""type"": ""function""
+            },
+            {
+                ""inputs"": [
+                    {
+                        ""internalType"": ""uint256"",
+                        ""name"": ""amount"",
+                        ""type"": ""uint256""
+                    }
+                ],
+                ""name"": ""spendCoins"",
+                ""outputs"": [],
+                ""stateMutability"": ""nonpayable"",
+                ""type"": ""function""
+            }
+        ]";
 
         try
         {
@@ -159,30 +177,29 @@ public class SimpleLobbyManager : MonoBehaviour
 
             if (contractlobby == null)
             {
-                Debug.LogError("Failed to initialize lobby contract");
+                UnityEngine.Debug.LogError("Failed to initialize lobby contract");
             }
             else
             {
-                Debug.Log("Lobby contract initialized successfully");
+                UnityEngine.Debug.Log("Lobby contract initialized successfully");
             }
 
             if (contractchest == null)
             {
-                Debug.LogError("Failed to initialize chest contract");
+                UnityEngine.Debug.LogError("Failed to initialize chest contract");
             }
             else
             {
-                Debug.Log("Chest contract initialized successfully");
+                UnityEngine.Debug.Log("Chest contract initialized successfully");
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Error initializing contracts: {e.Message}");
+            UnityEngine.Debug.LogError($"Error initializing contracts: {e.Message}");
         }
 
         //joinLobbyButton.onClick.AddListener(JoinLobby);
-        //RequestChestOpeningbuttton.onClick.AddListener(RequestChestOpening);
-        //ActivateFallbackbutton.onClick.AddListener(ActivateFallback);
+        //OpenChestButton.onClick.AddListener(OpenChest);
         //Setusername.onClick.AddListener(setusername);
         //stakeAmountText.text = $"Stake: {stakeAmountEth} ETH";
     }
@@ -201,14 +218,14 @@ public class SimpleLobbyManager : MonoBehaviour
         // Check if fully initialized
         if (!IsFullyInitialized())
         {
-            Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot set username.");
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot set username.");
             return;
         }
 
         // Null and empty string checks
         if (string.IsNullOrEmpty(kutta))
         {
-            Debug.LogError("Username cannot be null or empty");
+            UnityEngine.Debug.LogError("Username cannot be null or empty");
             return;
         }
 
@@ -218,7 +235,7 @@ public class SimpleLobbyManager : MonoBehaviour
             var wallet = ThirdwebManager.Instance.GetActiveWallet();
             if (wallet == null)
             {
-                Debug.LogError("No active wallet found");
+                UnityEngine.Debug.LogError("No active wallet found");
                 return;
             }
 
@@ -232,7 +249,7 @@ public class SimpleLobbyManager : MonoBehaviour
 
             if (setUsernameTx == null)
             {
-                Debug.LogError("Failed to prepare setUsername transaction");
+                UnityEngine.Debug.LogError("Failed to prepare setUsername transaction");
                 return;
             }
 
@@ -240,17 +257,17 @@ public class SimpleLobbyManager : MonoBehaviour
 
             if (string.IsNullOrEmpty(usernameTransactionHash))
             {
-                Debug.LogError("Transaction hash is null or empty");
+                UnityEngine.Debug.LogError("Transaction hash is null or empty");
                 return;
             }
 
-            Debug.Log($"Username set successfully! TX: {usernameTransactionHash}");
+            UnityEngine.Debug.Log($"Username set successfully! TX: {usernameTransactionHash}");
             // statusText.text = $"Username set! TX: {usernameTransactionHash}";
         }
         catch (System.Exception e)
         {
             //  statusText.text = $"Error: {e.Message}";
-            Debug.LogError($"SetUsername error: {e}");
+            UnityEngine.Debug.LogError($"SetUsername error: {e}");
         }
     }
 
@@ -259,7 +276,7 @@ public class SimpleLobbyManager : MonoBehaviour
         // Check if fully initialized
         if (!IsFullyInitialized())
         {
-            Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot join lobby.");
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot join lobby.");
             click = 0;
             staked = false;
             return;
@@ -270,13 +287,13 @@ public class SimpleLobbyManager : MonoBehaviour
             var wallet = ThirdwebManager.Instance.GetActiveWallet();
             if (wallet == null)
             {
-                Debug.LogError("No active wallet found");
+                UnityEngine.Debug.LogError("No active wallet found");
                 click = 0;
                 staked = false;
                 return;
             }
 
-            BigInteger weiValue = BigInteger.Parse("246000000000000");
+            BigInteger weiValue = BigInteger.Parse("1000000000000000000");
 
             // 2. Then stake and join
             //    statusText.text = "Joining lobby...";
@@ -290,7 +307,7 @@ public class SimpleLobbyManager : MonoBehaviour
 
             if (stakeAndJoinTx == null)
             {
-                Debug.LogError("Failed to prepare stakeAndJoin transaction");
+                UnityEngine.Debug.LogError("Failed to prepare stakeAndJoin transaction");
                 click = 0;
                 staked = false;
                 return;
@@ -300,249 +317,310 @@ public class SimpleLobbyManager : MonoBehaviour
 
             if (string.IsNullOrEmpty(joinTransactionHash))
             {
-                Debug.LogError("Join transaction hash is null or empty");
+                UnityEngine.Debug.LogError("Join transaction hash is null or empty");
                 click = 0;
                 staked = false;
                 return;
             }
 
             staked = true;
-            Debug.Log($"Joined lobby successfully! TX: {joinTransactionHash}");
+            UnityEngine.Debug.Log($"Joined lobby successfully! TX: {joinTransactionHash}");
+            afterstaked();
             // statusText.text = $"Joined lobby! TX: {joinTransactionHash}";
         }
         catch (System.Exception e)
         {
             //   statusText.text = $"Error: {e.Message}";
-            Debug.LogError($"JoinLobby error: {e}");
+            UnityEngine.Debug.LogError($"JoinLobby error: {e}");
             staked = false;
             click = 0;
         }
     }
 
-    public async void RequestChestOpening()
+    public async void StartGame()
     {
         // Check if fully initialized
         if (!IsFullyInitialized())
         {
-            Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot request chest opening.");
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot start game.");
             return;
         }
 
-        //statusText.text = "Requesting chest opening...";
+        //statusText.text = "Starting game...";
         try
         {
             var wallet = ThirdwebManager.Instance.GetActiveWallet();
             if (wallet == null)
             {
-                Debug.LogError("No active wallet found");
+                UnityEngine.Debug.LogError("No active wallet found");
                 return;
             }
 
-            Debug.Log(wallet);
-            // Example: 0.015 ETH in Wei (match your server value)
-            BigInteger valueWei = BigInteger.Parse("15000000000001");
-
-            // Prepare transaction for requestChestOpening (payable function)
-            var chestOpeningTx = await contractchest.Prepare(
+            // Set username using Prepare and Send pattern
+            var startGameTx = await contractlobby.Prepare(
                 wallet: wallet,
-                method: "requestChestOpening",
-                weiValue: valueWei
+                method: "startGame",
+                weiValue: BigInteger.Zero
             );
 
-            if (chestOpeningTx == null)
+            if (startGameTx == null)
             {
-                Debug.LogError("Failed to prepare requestChestOpening transaction");
+                UnityEngine.Debug.LogError("Failed to prepare startGame transaction");
                 return;
             }
 
-            Debug.Log(chestOpeningTx);
+            var startGameTransactionHash = await ThirdwebTransaction.Send(startGameTx);
+
+            if (string.IsNullOrEmpty(startGameTransactionHash))
+            {
+                UnityEngine.Debug.LogError("Transaction hash is null or empty");
+                return;
+            }
+
+            UnityEngine.Debug.Log($"Game Started without money! TX: {startGameTransactionHash}");
+            // statusText.text = $"Game started! TX: {startGameTransactionHash}";
+        }
+        catch (System.Exception e)
+        {
+            //  statusText.text = $"Error: {e.Message}";
+            UnityEngine.Debug.LogError($"Gamestart error: {e}");
+        }
+    }
+
+    public async void OpenChest()
+    {
+        // Check if fully initialized
+        if (!IsFullyInitialized())
+        {
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot open chest.");
+            return;
+        }
+
+        //statusText.text = "Opening chest...";
+        try
+        {
+            var wallet = ThirdwebManager.Instance.GetActiveWallet();
+            if (wallet == null)
+            {
+                UnityEngine.Debug.LogError("No active wallet found");
+                return;
+            }
+
+            // Get balance before opening chest
+            var userAddress = await wallet.GetAddress();
+            var balanceBefore = await contractchest.Read<BigInteger>(
+                method: "getCoins",
+                parameters: new object[] { userAddress }
+            );
+
+            UnityEngine.Debug.Log($"Balance before opening chest: {balanceBefore}");
+            UnityEngine.Debug.Log("Preparing openChest transaction...");
+
+            // Prepare transaction for openChest
+            var openChestTx = await contractchest.Prepare(
+                wallet: wallet,
+                method: "openChest",
+                weiValue: BigInteger.Zero
+            );
+
+            if (openChestTx == null)
+            {
+                UnityEngine.Debug.LogError("Failed to prepare openChest transaction");
+                return;
+            }
+
+            UnityEngine.Debug.Log("Sending openChest transaction...");
+
             // Send transaction
-            var txHash = await ThirdwebTransaction.Send(chestOpeningTx);
+            var txHash = await ThirdwebTransaction.Send(openChestTx);
 
             if (string.IsNullOrEmpty(txHash))
             {
-                Debug.LogError("Chest opening transaction hash is null or empty");
+                UnityEngine.Debug.LogError("Open chest transaction hash is null or empty");
                 return;
             }
 
-            //statusText.text = $"Chest opening requested! TX: {txHash}";
-            Debug.Log($"Chest opening transaction: {txHash}");
+            UnityEngine.Debug.Log($"Chest opened successfully! TX: {txHash}");
+            UnityEngine.Debug.Log("Waiting for transaction to be mined...");
+
+            // Wait a bit for the transaction to be mined
+            await System.Threading.Tasks.Task.Delay(3000);
+
+            // Get balance after opening chest
+            var balanceAfter = await contractchest.Read<BigInteger>(
+                method: "getCoins",
+                parameters: new object[] { userAddress }
+            );
+
+            BigInteger coinsWon = balanceAfter - balanceBefore;
+            UnityEngine.Debug.Log($"Balance after opening chest: {balanceAfter}");
+            UnityEngine.Debug.Log($"🎉 Coins won from chest: {coinsWon}");
+
+            // Update UI
+            if (coinwon != null)
+            {
+                coinwon.text = $"{coinsWon}";
+            }
+
+            if (statusText != null)
+            {
+                statusText.text = $"{balanceAfter}";
+            }
+            GetMyCoins();
+
+            //statusText.text = $"Chest opened! Won {coinsWon} coins! Total: {balanceAfter}";
         }
         catch (System.Exception e)
         {
             //statusText.text = $"Error: {e.Message}";
-            Debug.LogError($"RequestChestOpening error: {e}");
+            UnityEngine.Debug.LogError($"OpenChest error: {e}");
         }
     }
 
-    public async void ActivateFallback()
+    public async void GetCoins(string userAddress)
     {
         // Check if fully initialized
         if (!IsFullyInitialized())
         {
-            Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot activate fallback.");
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot get coins.");
             return;
         }
 
-        //statusText.text = "Auto-detecting sequence number...";
+        // Null and empty string checks
+        if (string.IsNullOrEmpty(userAddress))
+        {
+            UnityEngine.Debug.LogError("User address cannot be null or empty");
+            return;
+        }
+
+        try
+        {
+            UnityEngine.Debug.Log($"Getting coins for address: {userAddress}");
+
+            // Read coins balance for the user
+            var coinsBalance = await contractchest.Read<BigInteger>(
+                method: "getCoins",
+                parameters: new object[] { userAddress }
+            );
+
+            UnityEngine.Debug.Log($"Coins balance: {coinsBalance}");
+            //statusText.text = $"Coins: {coinsBalance}";
+        }
+        catch (System.Exception e)
+        {
+            //statusText.text = $"Error: {e.Message}";
+            UnityEngine.Debug.LogError($"GetCoins error: {e}");
+        }
+    }
+
+    public async void GetMyCoins()
+    {
+        // Check if fully initialized
+        if (!IsFullyInitialized())
+        {
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot get coins.");
+            return;
+        }
+
         try
         {
             var wallet = ThirdwebManager.Instance.GetActiveWallet();
             if (wallet == null)
             {
-                Debug.LogError("No active wallet found");
+                UnityEngine.Debug.LogError("No active wallet found");
                 return;
             }
 
             var userAddress = await wallet.GetAddress();
             if (string.IsNullOrEmpty(userAddress))
             {
-                Debug.LogError("Failed to get user address");
+                UnityEngine.Debug.LogError("Failed to get user address");
                 return;
             }
 
-            Debug.Log($"User address: {userAddress}");
+            UnityEngine.Debug.Log($"Getting coins for my address: {userAddress}");
 
-            // First, get user's chest requests to find unfulfilled ones
-            var getUserRequestsResult = await contractchest.Read<object>(
-                method: "getUserChestRequests",
+            // Read coins balance for the current user
+            var coinsBalance = await contractchest.Read<BigInteger>(
+                method: "getCoins",
                 parameters: new object[] { userAddress }
             );
 
-            // getUserRequestsResult is usually an object[] containing 6 arrays
-            if (getUserRequestsResult == null)
+            UnityEngine.Debug.Log($"My coins balance: {coinsBalance}");
+
+            if (statusText != null)
             {
-                //statusText.text = "No chest requests found.";
-                Debug.Log("getUserChestRequests returned null");
-                return;
+                statusText.text = $"{coinsBalance}";
             }
-
-            Debug.Log(getUserRequestsResult);
-
-            if (!(getUserRequestsResult is object[] resultArrays))
-            {
-                Debug.LogError("getUserChestRequests result is not an object array");
-                return;
-            }
-
-            Debug.Log($"Result contains {resultArrays.Length} arrays");
-
-            if (resultArrays.Length < 2)
-            {
-                Debug.LogError("Insufficient arrays in getUserChestRequests result");
-                return;
-            }
-
-            // Null check for individual arrays
-            if (resultArrays[0] == null || resultArrays[1] == null)
-            {
-                Debug.LogError("Sequence numbers or fulfilled array is null");
-                return;
-            }
-
-            // Cast each array separately with null checks
-            var sequenceNumbersArray = resultArrays[0] as object[];
-            var fulfilledArray = resultArrays[1] as object[];
-
-            if (sequenceNumbersArray == null || fulfilledArray == null)
-            {
-                Debug.LogError("Failed to cast sequence numbers or fulfilled arrays");
-                return;
-            }
-
-            if (sequenceNumbersArray.Length == 0)
-            {
-                Debug.Log("No chest requests found for this user");
-                return;
-            }
-
-            if (sequenceNumbersArray.Length != fulfilledArray.Length)
-            {
-                Debug.LogError("Sequence numbers and fulfilled arrays have different lengths");
-                return;
-            }
-
-            var sequenceNumbers = sequenceNumbersArray.Select(x => x != null ? Convert.ToUInt64(x) : 0UL).ToArray();
-            var fulfilled = fulfilledArray.Select(x => x != null ? Convert.ToBoolean(x) : false).ToArray();
-
-            Debug.Log("Chest request arrays retrieved successfully");
-            Debug.Log($"Found {sequenceNumbers.Length} chest requests");
-
-            // Find the latest unfulfilled request that can activate fallback
-            ulong? targetSequenceNumber = null;
-
-            for (int i = sequenceNumbers.Length - 1; i >= 0; i--)
-            {
-                // Convert sequence number to ulong
-                var seqNum = sequenceNumbers[i];
-                var isFulfilled = fulfilled[i];
-
-                if (!isFulfilled && seqNum > 0)
-                {
-                    Debug.Log($"Checking if fallback can be activated for sequence: {seqNum}");
-
-                    // Check if fallback can be activated for this sequence number
-                    try
-                    {
-                        var canFallback = await contractchest.Read<bool>(
-                            method: "canActivateFallback",
-                            parameters: new object[] { seqNum }
-                        );
-
-                        if (canFallback)
-                        {
-                            targetSequenceNumber = seqNum;
-                            Debug.Log($"✅ Found fallback-eligible sequence number: {targetSequenceNumber}");
-                            break;
-                        }
-                    }
-                    catch (System.Exception checkError)
-                    {
-                        Debug.LogWarning($"Could not check fallback eligibility for sequence {seqNum}: {checkError.Message}");
-                        continue;
-                    }
-                }
-            }
-
-            if (!targetSequenceNumber.HasValue)
-            {
-                throw new System.Exception("No fallback-eligible requests found for this user");
-            }
-
-            //statusText.text = $"Activating fallback for sequence {targetSequenceNumber}...";
-
-            // Prepare transaction for activateFallback
-            var activateFallbackTx = await contractchest.Prepare(
-                wallet: wallet,
-                method: "activateFallback",
-                weiValue: BigInteger.Zero, // Non-payable function
-                parameters: new object[] { targetSequenceNumber.Value }
-            );
-
-            if (activateFallbackTx == null)
-            {
-                Debug.LogError("Failed to prepare activateFallback transaction");
-                return;
-            }
-
-            Debug.Log($"Prepared fallback transaction for sequence: {targetSequenceNumber}");
-
-            // Send transaction
-            var txHash = await ThirdwebTransaction.Send(activateFallbackTx);
-
-            if (string.IsNullOrEmpty(txHash))
-            {
-                Debug.LogError("Activate fallback transaction hash is null or empty");
-                return;
-            }
-
-            //statusText.text = $"Fallback activated! Sequence: {targetSequenceNumber}, TX: {txHash}";
-            Debug.Log($"Activate fallback transaction: {txHash}");
         }
         catch (System.Exception e)
         {
             //statusText.text = $"Error: {e.Message}";
-            Debug.LogError($"ActivateFallback error: {e}");
+            UnityEngine.Debug.LogError($"GetMyCoins error: {e}");
+        }
+    }
+
+    public async void SpendCoins(string amount)
+    {
+        // Check if fully initialized
+        if (!IsFullyInitialized())
+        {
+            UnityEngine.Debug.LogError("SimpleLobbyManager is not fully initialized. Cannot spend coins.");
+            return;
+        }
+
+        // Null and empty string checks
+        if (string.IsNullOrEmpty(amount))
+        {
+            UnityEngine.Debug.LogError("Amount cannot be null or empty");
+            return;
+        }
+
+        try
+        {
+            var wallet = ThirdwebManager.Instance.GetActiveWallet();
+            if (wallet == null)
+            {
+                UnityEngine.Debug.LogError("No active wallet found");
+                return;
+            }
+
+            BigInteger amountToSpend = BigInteger.Parse(amount);
+
+            UnityEngine.Debug.Log($"Preparing to spend {amountToSpend} coins...");
+
+            // Prepare transaction for spendCoins
+            var spendCoinsTx = await contractchest.Prepare(
+                wallet: wallet,
+                method: "spendCoins",
+                weiValue: BigInteger.Zero,
+                parameters: new object[] { amountToSpend }
+            );
+
+            if (spendCoinsTx == null)
+            {
+                UnityEngine.Debug.LogError("Failed to prepare spendCoins transaction");
+                return;
+            }
+
+            UnityEngine.Debug.Log("Sending spendCoins transaction...");
+
+            // Send transaction
+            var txHash = await ThirdwebTransaction.Send(spendCoinsTx);
+
+            if (string.IsNullOrEmpty(txHash))
+            {
+                UnityEngine.Debug.LogError("Spend coins transaction hash is null or empty");
+                return;
+            }
+
+            UnityEngine.Debug.Log($"Coins spent successfully! TX: {txHash}");
+            //statusText.text = $"Spent {amountToSpend} coins! TX: {txHash}";
+        }
+        catch (System.Exception e)
+        {
+            //statusText.text = $"Error: {e.Message}";
+            UnityEngine.Debug.LogError($"SpendCoins error: {e}");
         }
     }
 
@@ -553,27 +631,34 @@ public class SimpleLobbyManager : MonoBehaviour
             JoinLobby();
             click = 1;
         }
-
         if (staked)
         {
             // Null check for UI GameObjects
             if (buttonStaked != null)
             {
                 buttonStaked.SetActive(false);
+                UnityEngine.Debug.Log("buttonStaked GameObject set to inactive");
             }
             else
             {
-                Debug.LogWarning("buttonStaked GameObject is null");
+                UnityEngine.Debug.LogWarning("buttonStaked GameObject is null");
             }
 
             if (waiting != null)
             {
                 waiting.SetActive(true);
+                UnityEngine.Debug.Log("waiting GameObject set to active");
             }
             else
             {
-                Debug.LogWarning("waiting GameObject is null");
+                UnityEngine.Debug.LogWarning("waiting GameObject is null");
             }
         }
+
+    }
+
+    public void BackToLobby()
+    {
+        SceneManager.LoadScene("Lobby");
     }
 }

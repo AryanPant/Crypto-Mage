@@ -101,7 +101,7 @@ public class MatchManager : NetworkBehaviour
         }
 
         // 4️⃣ After longer delay to allow Web3 transactions, return to main scene
-        Invoke(nameof(ReturnToMainScene), 10f); // Increased delay for Web3 processing
+        Invoke(nameof(GoToChestOpening), 10f); // Increased delay for Web3 processing
     }
     [ClientRpc]
     private void ShowFinalResultsClientRpc()
@@ -128,11 +128,11 @@ public class MatchManager : NetworkBehaviour
         }
     }
 
-    private void ReturnToMainScene()
+    private void GoToChestOpening()
     {
         if (IsServer)
         {
-            NetworkManager.SceneManager.LoadScene("Main Scene", LoadSceneMode.Single);
+            NetworkManager.SceneManager.LoadScene("Chest Opening", LoadSceneMode.Single);
         }
     }
 }

@@ -12,6 +12,6 @@ public class StartSceneManager : MonoBehaviour
         Application.Quit();
     }
     public void Shop(){
-        SceneManager.LoadScene("Shop");
+        SceneManager.LoadScene("Dukaan");
     }
 }
