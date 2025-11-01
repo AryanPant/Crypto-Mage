@@ -1,30 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-/// @notice Wizard lobby contract for hackathon
-/// - Each player must stake Sepolia-ETH worth >= $1 (via Pyth ETH/USD feed)
-/// - Single lobby (2..4 players). Unity (off-chain) runs the game timer.
-/// - Owner (game server) submits the final leaderboard and contract pays 60%/40% to top 2.
+/// @notice Wizard lobby: players stake HBAR (native Hedera currency) to join a 2–4 player game.
+/// After the game ends, the owner submits the final leaderboard; rewards pay 60%/40% to top two.
+///
+/// @dev HBAR is the native currency on Hedera, so it doesn't have a token address.
+/// This contract uses native HBAR transfers via payable functions.
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
-import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
 
 contract WizardLobbySepolia is ReentrancyGuard {
+    using Address for address payable;
+
     /// ---------- CONFIG ----------
     uint256 public constant MAX_PLAYERS = 4;
     uint256 public constant MIN_PLAYERS = 2;
-    uint256 public constant WINNER_BPS = 6000; // 60.00% (basis points)
+    uint256 public constant WINNER_BPS = 6000; // 60.00%
     uint256 public constant RUNNER_UP_BPS = 4000; // 40.00%
     uint256 public constant TOTAL_BPS = 10000;
-    uint256 public constant GAME_DURATION_SECONDS = 600; // Duration of the game in seconds (10 minutes)
-
-    /// Require USD value = 1 USD exactly (corrected for proper Pyth format)
-    uint256 public constant MINIMUM_USD_VALUE = 1 * 10 ** 18; // $1 in 8 decimals (Pyth format)
-
-    /// Pyth price feed ID for ETH/USD
-    bytes32 public constant ETH_USD_PRICE_FEED_ID = 0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace;
+    uint256 public constant GAME_DURATION_SECONDS = 300; // Duration of the game in seconds (5 minutes)
+    // Note: 1 HBAR = 100,000,000 tinybars (8 decimals)
 
     /// ---------- STATE ----------
     address public contractOwner;
@@ -47,8 +43,8 @@ contract WizardLobbySepolia is ReentrancyGuard {
         uint256 totalDeaths;
     }
 
-    /// Pyth contract interface
-    IPyth public pythPriceOracle;
+    // Minimum stake in tinybars (1 HBAR = 100,000,000 tinybars, since 1 HBAR = 100,000,000 tinybars)
+    uint256 public constant MINIMUM_STAKE_AMOUNT = 1_00_000_000; // 1 HBAR in tinybars
 
     // Custom error for gas efficiency
     error leaderboardLengthMismatch();
@@ -65,53 +61,18 @@ contract WizardLobbySepolia is ReentrancyGuard {
     event GameStarted();
     event StakesReturnedDueToMismatch(address[] players, uint256 totalAmountReturned);
 
-    
-    constructor(address _pythContract) {
+    constructor() {
         contractOwner = msg.sender;
-        pythPriceOracle = IPyth(_pythContract);
     }
 
-
     modifier onlyContractOwner() {
-        require(msg.sender == contractOwner, UnauthorizedAccess());
+        if (msg.sender != contractOwner) revert UnauthorizedAccess();
         _;
     }
 
     /////////////////////////////////////////////
-    /////          PRICE FUNCTIONS          /////
+    /////         STAKE REQUIREMENT         /////
     /////////////////////////////////////////////
-    function getCurrentPrice() internal view returns (PythStructs.Price memory) {
-        return pythPriceOracle.getPriceUnsafe(ETH_USD_PRICE_FEED_ID);
-    }
-
-    function getLatestRawPrice() external view returns (int64) {
-        PythStructs.Price memory priceData = pythPriceOracle.getPriceUnsafe(ETH_USD_PRICE_FEED_ID);
-        return priceData.price;
-    }
-
-    function getPriceExponent() external view returns (int32) {
-        PythStructs.Price memory priceData = pythPriceOracle.getPriceUnsafe(ETH_USD_PRICE_FEED_ID);
-        return priceData.expo;
-    }
-
-    /// @notice Convert ETH amount to USD value (8 decimals to match Pyth format)
-    function calculateUSDValue(uint256 ethAmountInWei) internal view returns (uint256) {
-        PythStructs.Price memory priceData = getCurrentPrice();
-        require(priceData.price > 0, "Invalid price from oracle");
-
-        // Convert price to proper format
-        uint256 adjustedPricePerETH;
-        if (priceData.expo >= 0) {
-            adjustedPricePerETH = uint256(uint64(priceData.price)) * (10 ** uint32(priceData.expo));
-        } else {
-            adjustedPricePerETH = uint256(uint64(priceData.price)) / (10 ** uint32(-priceData.expo));
-        }
-
-        // Calculate USD value: (ethAmount * pricePerETH) / 1e18
-        // Result should be in 8 decimals to match Pyth format
-        uint256 usdValueInCents = (ethAmountInWei * adjustedPricePerETH);
-        return usdValueInCents;
-    }
 
     /// ---------- USER FUNCTIONS ----------
     /// @notice Set or update a username for caller (required before staking)
@@ -121,20 +82,30 @@ contract WizardLobbySepolia is ReentrancyGuard {
         emit PlayerUsernameSet(msg.sender, _name);
     }
 
-    /// @notice Stake SEP-ETH equivalent to $1 USD and join lobby
+    /// @notice Stake HBAR and join the lobby
+    /// @dev Users send HBAR via msg.value when calling this payable function
     function stakeAndJoin() external payable nonReentrant {
         address user = msg.sender;
-        uint256 value = msg.value;
+        uint256 value = msg.value; // Amount of HBAR sent in tinybars
 
         require(bytes(playerUsername[user]).length > 0, "Must set username first");
         require(!isInLobby[user], "Already in current lobby");
-        require(value > 0, "No ETH sent");
-        require(currentLobby.length > MAX_PLAYERS, "Current Lobby is Full");
-
-        uint256 usdEquivalent = calculateUSDValue(value);
-        require(usdEquivalent >= MINIMUM_USD_VALUE, "Stake must be at least $1 USD");
+        require(value > 0, "No HBAR sent");
+        require(currentLobby.length < MAX_PLAYERS, "Current Lobby is Full");
+        require(value >= MINIMUM_STAKE_AMOUNT, "Stake must be at least 1 HBAR");
 
         currentLobby.push(user);
+        // Record participant for leaderboard generation (avoid duplicates within the same game)
+        bool alreadyAdded = false;
+        for (uint256 i = 0; i < gameParticipants.length; i++) {
+            if (gameParticipants[i] == user) {
+                alreadyAdded = true;
+                break;
+            }
+        }
+        if (!alreadyAdded) {
+            gameParticipants.push(user);
+        }
         isInLobby[user] = true;
         hasPlayerStaked[user] = true;
         playerStakeAmount[user] = value;
@@ -146,6 +117,7 @@ contract WizardLobbySepolia is ReentrancyGuard {
     }
 
     function startGame() external {
+        require(currentLobby.length >= MIN_PLAYERS, "Not enough players staked");
         gameEndTime = block.timestamp + GAME_DURATION_SECONDS;
         areRewardsDistributed = false;
         emit GameStarted();
@@ -202,6 +174,7 @@ contract WizardLobbySepolia is ReentrancyGuard {
         return sortedList;
     }
 
+    // finalLeaderboard is set
     function _storeFinalLeaderboard() external {
         finalLeaderboard = generateGameLeaderboard();
     }
@@ -211,7 +184,7 @@ contract WizardLobbySepolia is ReentrancyGuard {
         require(!areRewardsDistributed, "Rewards already distributed");
 
         address[] memory systemGeneratedLeaderboard = generateGameLeaderboard();
-        require(leaderboard.length != systemGeneratedLeaderboard.length, leaderboardLengthMismatch());
+        if (leaderboard.length != systemGeneratedLeaderboard.length) revert leaderboardLengthMismatch();
 
         // Compare each element in both arrays
         for (uint256 i = 0; i < leaderboard.length; i++) {
@@ -251,7 +224,7 @@ contract WizardLobbySepolia is ReentrancyGuard {
         // Mark distributed before external calls
         areRewardsDistributed = true;
 
-        // Send payouts using safe transfer
+        // Send HBAR payouts using Address.sendValue (recommended method)
         Address.sendValue(payable(winner), winnerReward);
         Address.sendValue(payable(runnerUp), runnerUpReward);
 
@@ -273,7 +246,7 @@ contract WizardLobbySepolia is ReentrancyGuard {
                 // Reset player stake amount before transfer to prevent reentrancy
                 playerStakeAmount[player] = 0;
 
-                // Send stake back to player
+                // Send HBAR stake back to player using Address.sendValue
                 Address.sendValue(payable(player), stakeAmount);
                 totalReturned += stakeAmount;
             }
@@ -300,6 +273,8 @@ contract WizardLobbySepolia is ReentrancyGuard {
     }
 
     /// ---------- EMERGENCY FUNCTIONS ----------
+    /// @notice Emergency withdraw all HBAR from the contract
+    /// @dev Withdraws all HBAR to contract owner using Address.sendValue
     function emergencyWithdrawAllFunds() external onlyContractOwner nonReentrant {
         uint256 contractBalance = address(this).balance;
         require(contractBalance > 0, "No balance to withdraw");
@@ -310,46 +285,28 @@ contract WizardLobbySepolia is ReentrancyGuard {
         _resetLobbyState();
     }
 
-    /**
-     * @dev View function to get the current leaderboard
-     * @return Array of player addresses sorted by kills in descending order
-     */
+    // Returns the current leaderboard sorted by kills (desc) and deaths (asc on ties).
     function getCurrentLeaderboard() external view returns (address[] memory) {
         return generateGameLeaderboard();
     }
 
-    /**
-     * @dev View function to get leaderboard position of a specific rank
-     * @param rankPosition Rank position (0 = winner, 1 = second place, etc.)
-     * @return Player address at the specified position
-     */
+    // Returns the player address at the given rank position in the final leaderboard.
     function getPlayerAtRank(uint256 rankPosition) external view returns (address) {
         require(rankPosition < finalLeaderboard.length, "Rank position out of bounds");
         return finalLeaderboard[rankPosition];
     }
 
-    /**
-     * @dev Get player statistics
-     * @param playerAddress Address of the player
-     * @return kills Number of kills
-     * @return deaths Number of deaths
-     */
+    // Returns the kills and deaths for the specified player address.
     function getPlayerGameStatistics(address playerAddress) external view returns (uint256 kills, uint256 deaths) {
         return (playerStats[playerAddress].totalKills, playerStats[playerAddress].totalDeaths);
     }
 
-    /**
-     * @dev Get all players who have participated
-     * @return Array of all player addresses
-     */
+    // Returns an array of all player addresses that have participated in the game.
     function getAllGameParticipants() external view returns (address[] memory) {
         return gameParticipants;
     }
 
-    /**
-     * @dev Get total number of players
-     * @return Number of players who have participated
-     */
+    // Returns the total number of players who have participated in the game.
     function getTotalParticipantCount() external view returns (uint256) {
         return gameParticipants.length;
     }
@@ -381,4 +338,3 @@ contract WizardLobbySepolia is ReentrancyGuard {
         areRewardsDistributed = false;
     }
 }
-
